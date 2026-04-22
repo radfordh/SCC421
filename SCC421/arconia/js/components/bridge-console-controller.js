@@ -10,7 +10,7 @@ AFRAME.registerComponent('bridge-console-controller', {
     this.roundResolved = false;
     this.inputLocked = false;
 	this.upperCollection = document.querySelector("#upper-collection");
-	this.upperCollection.setAttribute("visible", false);
+	// this.upperCollection.setAttribute("visible", false);
     this.xrClickPlayer = document.querySelector('#audio-manager').components['global-audio-manager'];
 
     this.lowerIds.forEach((id) => {
