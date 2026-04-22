@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta charset="UTF-8">
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<!--script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script-->
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<style>
+      /* Top status overlay (MindAR UI replacement; no scanning bar) */
+      #status-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.35);
+        color: #fff;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        pointer-events: none;
+      }
+
+      #status-overlay .panel {
+        max-width: 720px;
+        margin: 0 auto;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 12px;
+        padding: 10px 12px;
+        backdrop-filter: blur(6px);
+      }
+
+      #status-overlay pre {
+        margin: 0;
+        white-space: pre-wrap;
+        font-size: 14px;
+        line-height: 1.35;
+        letter-spacing: 0.2px;
+      }
+
+      /* Utility */
+      .hidden { display: none; }
+</style>
+<script>
+      /**
+       * Updates a top-of-page status overlay to show tracking status per target (A–D),
+       * using WORLD rotation (not local) from the target entity's Object3D.
+       *
+       * Display rules:
+       * - If no targets are currently tracked: "Scanning for image target"
+       * - If any target is tracked:
+       *     "Image Targets Found:
+       *      A: Tracking <deg>° / Searching
+       *      ..."
+       */
+ // Option: emit a custom DOM event from mindar-target-status-ui,
+// then listen on the GLB entity and update force-hue.
+//
+// 1) On the UI component entity: add `emitHueOn: #car` (or keep default).
+// 2) On the car entity: add `hue-from-event="source: #mindarRoot"`
+//    (or point to whatever element has mindar-target-status-ui).
+
+// -----------------------------
+// A) EMITTER: mindar-target-status-ui (additions only)
+// -----------------------------
+// If mindar-target-status-ui is on <a-scene>, emit from the scene itself,
+// and listen from the car entity.
+
+AFRAME.registerComponent("mindar-target-status-ui", {
+  schema: {
+    updateIntervalMs: { type: "int", default: 50 }
+  },
+
+  init: function () {
+    this.statusEl = document.getElementById("status-text");
+    this.lastUpdateTs = 0;
+
+    this.targets = Array.from(this.el.querySelectorAll("[mindar-image-target]"))
+      .map((el) => {
+        const attr = el.getAttribute("mindar-image-target") || {};
+        const idx = Number(attr.targetIndex);
+        return { el, idx: Number.isFinite(idx) ? idx : -1 };
+      })
+      .filter((t) => t.idx === 1 || t.idx === 2);
+
+    this.state = {
+      1: { tracking: false, deg: null }, // Hue
+      2: { tracking: false, deg: null }  // Car
+    };
+
+    this.targets.forEach((t) => {
+      t.el.addEventListener("targetFound", () => {
+        this.state[t.idx].tracking = true;
+        this.state[t.idx].deg = null;
+        this.render?.();
+      });
+
+      t.el.addEventListener("targetLost", () => {
+        this.state[t.idx].tracking = false;
+        this.state[t.idx].deg = null;
+        this.render?.();
+      });
+    });
+
+    // NEW
+    this._lastClamped = null;
+
+    this.render?.();
+  },
+
+  tick: function (timeMs) {
+    if (!this.statusEl) return;
+    if (timeMs - this.lastUpdateTs < this.data.updateIntervalMs) return;
+
+    // Hue targetIndex 1
+    const hueTarget = this.targets.find((t) => t.idx === 1);
+    const hueState = this.state[1];
+
+    if (hueTarget && hueState.tracking) {
+      const q = new THREE.Quaternion();
+      const e = new THREE.Euler();
+
+      hueTarget.el.object3D.getWorldQuaternion(q);
+      e.setFromQuaternion(q, "YXZ");
+
+      let deg = THREE.MathUtils.radToDeg(e.z);
+      deg = ((deg % 360) + 360) % 360;
+
+      hueState.deg = deg;
+
+      // Clamp to 15° and emit from the SCENE (this.el is <a-scene>)
+      const clamped = Math.round(deg / 15) * 15;
+
+      if (clamped !== this._lastClamped) {
+        this._lastClamped = clamped;
+        this.el.emit("hue-clamped", { deg: clamped }, false);
+      }
+
+      this.lastUpdateTs = timeMs;
+      this.render?.();
+      return;
+    }
+
+    this.lastUpdateTs = timeMs;
+  },
+  render: function () {
+    if (!this.statusEl) return;
+
+    const anyTracking = Object.values(this.state).some((s) => s.tracking);
+    if (!anyTracking) {
+      this.statusEl.textContent = "Scanning for target";
+      return;
+    }
+
+    const lines = ["Tracking target:"];
+
+    // Order explicitly: Car then Hue
+    // Car = targetIndex 2 (no angle)
+    if (this.state[2].tracking) lines.push("Car: Showing Cadillac CT4");
+    else lines.push("Car: Searching");
+
+    // Hue = targetIndex 1 (clamp to 15°)
+    const hue = this.state[1];
+    if (hue.tracking) {
+      const clamp15 = Number.isFinite(hue.deg) ? Math.round(hue.deg / 15) * 15 : null;
+      lines.push(`Hue: Tracking ${Number.isFinite(clamp15) ? `${clamp15}°` : "—"}`);
+    } else {
+      lines.push("Hue: Searching");
+    }
+
+    this.statusEl.textContent = lines.join("\n");
+  }
+});
+	  AFRAME.registerComponent("axis-helper", {
+        schema: {
+          size: { type: "number", default: 1 }
+        },
+        init: function () {
+          const size = this.data.size;
+          const axes = new THREE.AxesHelper(size);
+          this.el.setObject3D("axis-helper", axes);
+        },
+        remove: function () {
+          this.el.removeObject3D("axis-helper");
+        },
+        update: function () {
+          // Recreate on update to apply new size.
+          this.remove();
+          this.init();
+        }
+      });
+
+	  AFRAME.registerComponent('force-resize', {
+		init: function () {
+		  const scene = this.el.sceneEl;
+
+		  const doResize = () => {
+			// A-Frame internal resize (updates renderer + camera aspect)
+			if (scene && scene.resize) scene.resize();
+		  };
+
+		  window.addEventListener('resize', doResize, { passive: true });
+		  window.addEventListener('orientationchange', () => setTimeout(doResize, 250), { passive: true });
+
+		  scene.addEventListener('loaded', () => setTimeout(doResize, 250));
+		  scene.addEventListener('enter-vr', () => setTimeout(doResize, 250));
+		  scene.addEventListener('exit-vr',  () => setTimeout(doResize, 250));
+		}
+	  });
+	  
+// Hue-shift textured GLBs by hue-rotating the final shaded color in the fragment shader.
+// Works with MeshStandardMaterial produced by glTF models.
+//
+// Usage:
+//   <a-entity gltf-model="#model" hue-rotate="deg: 30"></a-entity>
+// Update:
+//   el.setAttribute('hue-rotate', 'deg', 120);
+
+AFRAME.registerComponent("force-hue", {
+  schema: {
+    hueDeg: { type: "number", default: 120 }, // green
+    amount: { type: "number", default: 1 }    // 0..1
+  },
+
+  init: function () {
+    this._materials = new Set();
+    this._onModelLoaded = () => this._collectAndPatch();
+    this.el.addEventListener("model-loaded", this._onModelLoaded);
+
+    // If already loaded
+    this._collectAndPatch();
+  },
+
+  update: function () {
+    const h = (((this.data.hueDeg % 360) + 360) % 360) / 360;
+    const a = Math.max(0, Math.min(1, this.data.amount));
+
+    for (const mat of this._materials) {
+      mat.userData.__forceHueH.value = h;
+      mat.userData.__forceHueA.value = a;
+    }
+  },
+
+  remove: function () {
+    this.el.removeEventListener("model-loaded", this._onModelLoaded);
+    this._materials.clear();
+  },
+
+  _collectAndPatch: function () {
+    const root =
+      this.el.getObject3D("mesh") ||
+      this.el.getObject3D("model"); // some setups attach here
+
+    if (!root) return;
+
+    root.traverse((node) => {
+      if (!node.isMesh) return;
+
+      const mats = Array.isArray(node.material) ? node.material : [node.material];
+      for (const mat of mats) {
+        if (!mat || !mat.isMaterial) continue;
+
+        mat.userData = mat.userData || {};
+        if (mat.userData.__forceHuePatched) {
+          this._materials.add(mat);
+          continue;
+        }
+
+        mat.userData.__forceHuePatched = true;
+        mat.userData.__forceHueH = { value: 120 / 360 };
+        mat.userData.__forceHueA = { value: 1.0 };
+
+        mat.onBeforeCompile = (shader) => {
+          shader.uniforms.uTargetHue = mat.userData.__forceHueH;
+          shader.uniforms.uHueAmount = mat.userData.__forceHueA;
+
+          shader.fragmentShader =
+            `
+uniform float uTargetHue;
+uniform float uHueAmount;
+
+vec3 rgb2hsv(vec3 c){
+  vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
+  vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+  vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+  float d = q.x - min(q.w, q.y);
+  float e = 1.0e-10;
+  return vec3(abs(q.z + (q.w - q.y) / (6.0*d + e)), d / (q.x + e), q.x);
+}
+
+vec3 hsv2rgb(vec3 c){
+  vec3 p = abs(fract(c.xxx + vec3(0.0, 1.0/3.0, 2.0/3.0)) * 6.0 - 3.0);
+  return c.z * mix(vec3(1.0), clamp(p - 1.0, 0.0, 1.0), c.y);
+}
+
+vec3 forceHue(vec3 rgb, float targetHue, float amount){
+  vec3 hsv = rgb2hsv(rgb);
+  hsv.x = targetHue;
+  vec3 outRgb = hsv2rgb(hsv);
+  return mix(rgb, outRgb, amount);
+}
+` + shader.fragmentShader;
+
+          // This location is AFTER baseColorTexture + vertex color are applied,
+          // but BEFORE lighting uses the diffuse.
+          shader.fragmentShader = shader.fragmentShader.replace(
+            "#include <color_fragment>",
+            `#include <color_fragment>
+diffuseColor.rgb = forceHue(diffuseColor.rgb, uTargetHue, uHueAmount);`
+          );
+        };
+
+        mat.needsUpdate = true;
+        this._materials.add(mat);
+      }
+    });
+
+    this.update();
+  }
+});
+
+// Receiver: attach to the car entity
+AFRAME.registerComponent("hue-from-scene", {
+  schema: {
+    event: { type: "string", default: "hue-clamped" },
+    attribute: { type: "string", default: "force-hue" },
+    param: { type: "string", default: "hueDeg" }
+  },
+
+  init: function () {
+    this._scene = this.el.sceneEl;
+    this._handler = (evt) => {
+      const deg = evt?.detail?.deg;
+      if (!Number.isFinite(deg)) return;
+      this.el.setAttribute(this.data.attribute, this.data.param, deg);
+    };
+
+    // In case scene isn't ready yet
+    if (this._scene) this._scene.addEventListener(this.data.event, this._handler);
+    else this.el.addEventListener("loaded", () => {
+      this._scene = this.el.sceneEl;
+      this._scene.addEventListener(this.data.event, this._handler);
+    });
+  },
+
+  remove: function () {
+    if (this._scene && this._handler) {
+      this._scene.removeEventListener(this.data.event, this._handler);
+    }
+  }
+});
+
+// Listens for the scene "hue-clamped" event and applies the same hue to a simple sphere.
+// Usage:
+//   <a-sphere id="hueBall" radius="0.03" position="0 0.15 -0.25" hue-sphere></a-sphere>
+
+// Makes the sphere preview closer to the car by forcing hue while preserving
+// the sphere's existing saturation/lightness (instead of using pure HSL).
+// Initialize the sphere color to something "blueish" to match the car base.
+
+AFRAME.registerComponent("hue-sphere-hsv", {
+  schema: {
+    event: { type: "string", default: "hue-clamped" },
+    baseColor: { type: "color", default: "#0024A1" },
+    metalness: { type: "number", default: 1 },
+    roughness: { type: "number", default: 1 }
+  },
+
+  init: function () {
+    this.el.setAttribute("material", {
+      color: this.data.baseColor,
+      metalness: this.data.metalness,
+      roughness: this.data.roughness
+    });
+
+    this._scene = this.el.sceneEl;
+
+    const clamp01 = (x) => Math.max(0, Math.min(1, x));
+
+    const rgbToHsv = (r, g, b) => {
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const d = max - min;
+      let h = 0;
+
+      if (d !== 0) {
+        if (max === r) h = ((g - b) / d) % 6;
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        h /= 6;
+        if (h < 0) h += 1;
+      }
+
+      const s = max === 0 ? 0 : d / max;
+      const v = max;
+
+      return { h, s, v };
+    };
+
+    const hsvToRgb = (h, s, v) => {
+      const i = Math.floor(h * 6);
+      const f = h * 6 - i;
+      const p = v * (1 - s);
+      const q = v * (1 - f * s);
+      const t = v * (1 - (1 - f) * s);
+
+      switch (i % 6) {
+        case 0: return { r: v, g: t, b: p };
+        case 1: return { r: q, g: v, b: p };
+        case 2: return { r: p, g: v, b: t };
+        case 3: return { r: p, g: q, b: v };
+        case 4: return { r: t, g: p, b: v };
+        case 5: return { r: v, g: p, b: q };
+      }
+    };
+
+    // Base S/V from your initial paint-ish color
+    const base = new THREE.Color(this.data.baseColor);
+    const baseHSV = rgbToHsv(base.r, base.g, base.b);
+
+    this._handler = (evt) => {
+      const degIn = evt?.detail?.deg;
+      if (!Number.isFinite(degIn)) return;
+
+      // Normalize to [0,360)
+      const deg = ((degIn % 360) + 360) % 360;
+
+      // IMPORTANT FIX: invert direction so 90/270 match expected rotation
+      const invDeg = (360 - deg) % 360;
+
+      // -> [0,1)
+      const h = invDeg / 360;
+
+      const rgb = hsvToRgb(h, baseHSV.s, baseHSV.v);
+      const c = new THREE.Color(clamp01(rgb.r), clamp01(rgb.g), clamp01(rgb.b));
+
+      this.el.setAttribute("material", {
+        color: `#${c.getHexString()}`,
+        metalness: this.data.metalness,
+        roughness: this.data.roughness
+      });
+    };
+
+    if (this._scene) this._scene.addEventListener(this.data.event, this._handler);
+    else this.el.addEventListener("loaded", () => {
+      this._scene = this.el.sceneEl;
+      this._scene.addEventListener(this.data.event, this._handler);
+    });
+  },
+
+  remove: function () {
+    if (this._scene && this._handler) this._scene.removeEventListener(this.data.event, this._handler);
+  }
+});
+</script>
+</head>
+<body>
+<!-- Custom scanning overlay without the default scanning bar -->
+<div id="status-overlay"><div class="panel"><pre id="status-text">E3: Scanning for image targets</pre></div></div>
+	<a-scene color-space="sRGB" force-resize device-orientation-permission-ui="enabled: true" mindar-image="imageTargetSrc: .\images\targets.mind; maxTrack: 4; filterMinCF: 0.0005; filterBeta: 0.1; warmupTolerance: 2; missTolerance: 3; uiLoading: no; uiScanning: no; uiError: no;" mindar-target-status-ui="updateIntervalMs: 50" renderer="colorManagement: true, physicallyCorrectLights" xr-mode-ui="enabled: false">
+		<a-assets>
+        <!-- Your asset -->
+			<a-asset-item id="model" src="./models/cadillac_ct4_2022.glb"></a-asset-item>
+			<a-mixin id="spin-y-10dps"
+				animation__spin="property: rotation; from: 0 0 0; to: 0 360 0; dur: 3600; easing: linear; loop: true">
+			</a-mixin>
+		</a-assets>
+		
+		<a-camera look-controls="enabled: false" position="0 0 0"></a-camera>
+		
+
+		<a-entity mindar-image-target="targetIndex: 1">
+		
+		<!--a-text align="center" color="#00FF00" position="0 0 0.1" value="B" width="25"></a-text-->
+		 <!-- Hue target (targetIndex: 1) -->
+
+		<a-entity id="sphereRig">
+		  <!-- Local preview lights so the sphere is visible even when ONLY targetIndex: 1 is active -->
+
+
+			<a-cylinder id="platform2" position="0 0 0" rotation="0 90 90" radius="0.005" height="0.01" depth="1" material="color: #b8b8b8; roughness: 0.4; metalness: 0.25" shadow="receive: true">
+		  <!-- Sphere preview: metalness=1, roughness=1 -->
+		  <a-cylinder
+			id="hueBall"
+			radius="0.35"
+			height="0.01"
+			position="0 -0.175 0.0"
+			material="color: #0024A1; metalness: 1; roughness: 1"
+			hue-sphere-hsv="baseColor: #0024A1; metalness: 0.4; roughness: 0.7"
+		  ></a-cylinder>
+		  <a-entity light="type: ambient; intensity: 2"></a-entity>
+		  <a-entity light="type: point; intensity: 3.0; distance: 3; decay: 2" position="0 1 0.6"></a-entity>
+			</a-cylinder>
+		</a-entity>
+		</a-entity>
+		<a-entity mindar-image-target="targetIndex: 2">
+			<a-entity id="rig" ><!--axis-helper scale="1.2 1.2 1.2"-->
+				<a-cylinder id="platform" position="0 0 0" rotation="0 90 90" radius="0.45" height="0.01" depth="1" material="color: #b8b8b8; roughness: 0.4; metalness: 0.25" shadow="receive: true">
+					<a-entity id="car" gltf-model="#model" position="0 0.005 0.425" rotation="0 0 0" scale="0.000018 0.000018 0.000018" 
+						shadow="cast: true; receive: true" force-hue="hueDeg: 90; amount: 1" hue-from-scene>
+						<a-entity axis-helper="size:0.5" position="0 0.2 -0.425" ></a-entity>
+						<a-entity axis-helper="size:0.5" position="0 0.2 0.425" ></a-entity>
+					</a-entity>
+					<a-entity id="alt-spotlights">
+						<a-entity
+						  light="type: spot; intensity: 2.2; angle: 65; penumbra: 0.7; castShadow: true"
+						  position="0 1.6 0.95"
+						  look-at="#car">
+						</a-entity>
+						<a-entity
+						  light="type: spot; intensity: 1.2; angle: 80; penumbra: 0.85; castShadow: false"
+						  position="0.9 1.2 0.25"
+						  look-at="#car">
+						</a-entity>
+						<a-entity
+						  light="type: spot; intensity: 1.6; angle: 45; penumbra: 0.35; castShadow: false"
+						  position="-0.9 1.4 -0.45"
+						  look-at="#car">
+						</a-entity>
+						<a-entity
+						  light="type: point; intensity: 0.35; distance: 6"
+						  position="0 0.25 0.425">
+						</a-entity>
+						<a-entity light="type: ambient; intensity: 0.5"></a-entity>
+					</a-entity>
+					<!-- FRONT spotlight -->
+					<a-entity id="spotlight-rig" mixin="spin-y-10dps">
+					<a-entity 
+					  light="type: spot; intensity: 2; angle: 30; penumbra: 0.3; castShadow: true"
+					  position="0 1.6 2.4"
+					  look-at="#car">
+					</a-entity>
+
+					<!-- RIGHT spotlight -->
+					<a-entity 
+					  light="type: spot; intensity: 2; angle: 30; penumbra: 0.3; castShadow: true"
+					  position="1.2 1.6 0.85"
+					  look-at="#car">
+					</a-entity>
+
+					<!-- BACK spotlight -->
+					<a-entity 
+					  light="type: spot; intensity: 2; angle: 30; penumbra: 0.3; castShadow: true"
+					  position="0 1.6 -0.8"
+					  look-at="#car">
+					</a-entity>
+
+					<!-- LEFT spotlight -->
+					<a-entity 
+					  light="type: spot; intensity: 2; angle: 30; penumbra: 0.3; castShadow: true"
+					  position="-1.2 1.6 0.85"
+					  look-at="#car">
+					</a-entity>
+					</a-entity>
+				</a-cylinder>
+				
+			</a-entity>
+		</a-entity>
+</a-scene>
+</body>
+</html>

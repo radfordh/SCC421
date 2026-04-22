@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+  />
+    <!-- A-Frame -->
+    <!--script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script-->
+	<script src="./js/libs/aframe.min.js"></script>
+    <!-- MindAR -->
+    <!--script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script-->
+	<script src="./js/libs/mindar-image-aframe.prod.js"></script>	
+
+	<script src="./js/components/mindar-orientation-reset.js"></script>
+	<script src="./js/components/base-indicator.js"></script>
+	<script src="./js/components/target-marble-link.js"></script>
+	<script src="./js/components/audio-component.js"></script>
+	<script src="./js/components/bridge-console-controller.js"></script>
+	
+
+	
+  <link rel="stylesheet" href="../../libs/qr/qr-overlay.css">
+    <style>
+      body {
+        margin: 0;
+        background: black;
+        overflow: hidden;
+      }
+
+      /* ===== PORTAL (AR VIEW) ===== */
+      #portal {
+        position: absolute;
+        top: 5vh;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70vw;
+        height: 55vh;
+        border: 10px solid #888;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(0,0,0,0.9);
+		
+      }
+
+      #portal canvas {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;
+      }
+
+      /* ===== HUD OVERLAY ===== */
+      #hud {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: auto; /* allow AR interaction later */
+      }
+	
+  .a-enter-vr-button {
+    display: none !important;
+  }
+
+    </style>
+  </head>
+
+  <body>
+
+    <!-- ===== AR PORTAL ===== -->
+    <div id="portal">
+      <a-scene
+        embedded
+        mindar-image="imageTargetSrc: ./images/targets.mind;maxTrack: 4; filterMinCF: 0.0005;  filterBeta: 0.1; warmupTolerance: 2;   missTolerance: 3;uiScanning: false;"
+        vr-mode-ui="enabled: false" style="pointer-events: none"
+        device-orientation-permission-ui="enabled: true"> 
+	  <a-entity mindar-image-target="targetIndex: 0" target-marble-link="marbleId: m1">
+        <a-text value="A" align="center" color="#FF0000" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
+      <a-entity mindar-image-target="targetIndex: 1" target-marble-link="marbleId: m2">
+        <a-text value="B" align="center" color="#00FF00" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
+	  <a-entity mindar-image-target="targetIndex: 2" target-marble-link="marbleId: m3">
+        <a-text value="C" align="center" color="#FF00FF" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
+      <a-entity mindar-image-target="targetIndex: 3" target-marble-link="marbleId: m4" >
+        <a-text value="D" align="center" color="#00FFFF" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
+        <a-camera mindar-orientation-reset look-controls="enabled: false"></a-camera>
+      </a-scene>
+    </div>
+
+    <!-- ===== HUD / CONSOLE ===== -->
+    <div id="hud">
+      <a-scene id="hud-scene" embedded  renderer="alpha: true" >
+		<a-assets>
+		    <a-mixin
+				id="marble-base"
+				geometry="primitive: sphere; radius: 0.12"
+				material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4"
+				animation__spin="
+				  property: rotation;
+				  to: 0 360 0; dur: 4000; easing: linear; loop: true; autoplay: false;
+				  startEvents: spin-start; pauseEvents: spin-stop; resumeEvents: spin-resume;">
+			</a-mixin>
+			<a-mixin
+				id="base-cylinder"
+				geometry="primitive: cylinder; radius: 0.12; height: 0.05"
+				material="color: #333"
+				base-indicator>
+			</a-mixin>
+			 <audio id="xr_click_sfx" src="./audio/xr_click.wav" preload="auto"></audio>
+		</a-assets>
+		<a-entity id="game-controller" bridge-console-controller></a-entity>
+		<a-entity
+		  id="xr-click-player"
+		  sound="src: #xr_click_sfx; poolSize: 4; volume: 1.0">
+		</a-entity>
+        <a-camera position="0 0 0" look-controls="magicWindowTrackingEnabled: false" camera="active: true">
+
+
+          
+			
+
+
+			<!-- ===== LOWER BASES ===== -->
+
+			  <a-cursor
+    rayOrigin="mouse"
+    raycaster="objects: .clickable"
+    cursor="rayOrigin: mouse">
+  </a-cursor>	
+         
+        </a-camera>
+
+<!-- UPPER SLAB -->
+			<a-box position="0 -0.6 -1.65" depth="0.4" width="2.2" height="0.05" color="#666">
+			 <a-entity id="upper-collection">
+				<!-- ===== UPPER ROW (4 marbles) ===== -->
+				<a-sphere id="m1" mixin="marble-base" position="-0.75 0.19 0" material="color: #8fec43"></a-sphere>
+				<a-sphere id="m2" mixin="marble-base" position="-0.25 0.19 0" material="color: #36bdab"></a-sphere>
+				<a-sphere id="m3" mixin="marble-base" position=" 0.25 0.19 0" material="color: #ff9448"></a-sphere>
+				<a-sphere id="m4" mixin="marble-base" position=" 0.75 0.19 0" material="color: #ec4376"></a-sphere>
+
+				<!-- ===== UPPER BASES ===== -->
+				<a-cylinder id="m1b" position="-0.75 0.03 0" mixin="base-cylinder"></a-cylinder>
+				<a-cylinder id="m2b" position="-0.25 0.03 0" mixin="base-cylinder"></a-cylinder>
+				<a-cylinder id="m3b" position=" 0.25 0.03 0" mixin="base-cylinder"></a-cylinder>
+				<a-cylinder id="m4b" position=" 0.75 0.03 0" mixin="base-cylinder"></a-cylinder>
+			 </a-entity>
+			</a-box>
+			
+			<!--a-sphere id="m5o" class="lower-marble clickable"  mixin="marble-base" position="0 0 -2.0" material="color: #FF4D4D"></a-sphere-->
+				
+
+			<!-- LOWER SLAB (closer + slightly wider) -->
+			<a-box position="0 -1.1 -1.55" depth="0.4" width="2.6" height="0.05" color="#888">
+				<a-cylinder id="m5b" position="-1.0 0.08 0" mixin="base-cylinder"></a-cylinder>
+				<a-cylinder id="m6b" position="-0.5 0.08 0" mixin="base-cylinder"></a-cylinder>
+				<a-cylinder id="m7b" position=" 0.0 0.08 0" mixin="base-cylinder"></a-cylinder>
+				<a-cylinder id="m8b" position=" 0.5 0.08 0" mixin="base-cylinder"></a-cylinder>
+				<a-cylinder id="m9b" position=" 1.0 0.08 0" mixin="base-cylinder"></a-cylinder>
+				
+				<!-- ===== LOWER ROW (5 marbles) ===== -->
+				<a-sphere id="m5" class="lower-marble clickable"  mixin="marble-base" position="-1.0 0.22 0" material="color: #FF4D4D"></a-sphere>
+				<a-sphere id="m6" class="lower-marble clickable"  mixin="marble-base" position="-0.5 0.22 0" material="color: #4DFF88"></a-sphere>
+				<a-sphere id="m7" class="lower-marble clickable"  mixin="marble-base" position=" 0.0 0.22 0" material="color: #4DA6FF"></a-sphere>
+				<a-sphere id="m8" class="lower-marble clickable"  mixin="marble-base" position=" 0.5 0.22 0" material="color: #FFD24D"></a-sphere>
+				<a-sphere id="m9" class="lower-marble clickable"  mixin="marble-base" position=" 1.0 0.22 0" material="color: #B84DFF"></a-sphere>
+			</a-box>
+      </a-scene>
+	  <script>
+document.querySelector('a-scene#hud-scene').addEventListener('loaded', () => {
+  const cursor = document.querySelector('a-cursor');
+
+  // 🔥 Force raycaster to use correct canvas
+  const canvas = document.querySelector('#hud canvas');
+
+  cursor.components.raycaster.el.sceneEl.canvas = canvas;
+
+  cursor.components.raycaster.refreshObjects();
+
+  console.log('Mouse raycaster rebound to HUD canvas');
+});
+
+const audioEntity = AudioComponentFactory.create({
+  sources: [
+    './audio/idoberg-ambient-pads-loop-296968.mp3',	// index 0 → ambient
+    './audio/xr_click.wav',							// index 1/0 → user click on sphere.
+    './audio/chrisiex1-correct-156911.mp3',    		// index 2/1 → found notification
+	'./audio/material-buy-success-394517.mp3'		// index 3/2→ success notification
+  ]
+});
+
+document.querySelector('a-scene#hud-scene').appendChild(audioEntity);
+
+
+</script>
+    </div>
+  <script src="../../libs/qr/qr-overlay.js"></script>
+  </body>
+</html>
