@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Arconia</title>
+  <script src="./js/libs/aframe.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #000; }
+    .a-enter-vr-button { display: none !important; }
+
+    @font-face {
+      font-family: 'Moonstrike';
+      src: url('./Moonstrike-nRqzP.otf') format('opentype');
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 7vh;
+      pointer-events: none;
+      gap: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards;
+      animation-delay: 23s;
+    }
+
+    #title {
+      font-family: 'Moonstrike', sans-serif;
+      font-size: 8rem;
+      color: #c084fc;
+      text-shadow: 0 0 40px rgba(192, 132, 252, 0.8), 0 0 80px rgba(147, 51, 234, 0.5);
+      letter-spacing: 0.05em;
+    }
+
+    .btn {
+      pointer-events: auto;
+      display: inline-block;
+      padding: 0.8rem 2.8rem;
+      background: linear-gradient(135deg, #3a7bd5, #6a3de8);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 999px;
+      box-shadow: 0 0 30px rgba(100,100,255,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 45px rgba(100,100,255,0.6);
+    }
+    .btn:active { transform: scale(0.97); }
+  </style>
+</head>
+<body>
+
+  <a-scene
+    vr-mode-ui="enabled: false"
+    renderer="antialias: true">
+
+    <a-assets>
+<a-asset-item id="space-env" src="./models/need_some_space.glb"></a-asset-item>
+      <a-asset-item id="purple-planet" src="./models/purple_planet.glb"></a-asset-item>
+      <a-asset-item id="crystal-planet" src="./models/crystal_planet.glb"></a-asset-item>
+      <a-asset-item id="alien" src="./models/baby_cute_alien.glb"></a-asset-item>
+      <a-asset-item id="spaceship" src="./models/futuristic_spaceship.glb"></a-asset-item>
+    </a-assets>
+
+<a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
+    <a-light type="directional" color="#ffe0cc" intensity="1.2" position="1 2 1"></a-light>
+
+    <!-- Scene group — animated to simulate camera panning right -->
+    <!-- animation__zoom="property: position; from: 0 0 0; to: 12 1 11; dur: 8000; easing: easeInOutSine; startEvents: animationcomplete__arc" -->
+    <a-entity
+      id="scene-group"
+      animation__pan="property: position; from: -145 0 0; to: 0 0 0; dur: 15000; easing: easeInOutSine"
+      animation__arc="property: rotation; from: 0 0 0; to: 0 35 0; dur: 8000; easing: easeInOutSine; startEvents: animationcomplete__pan">
+
+      <!-- Planet — positioned as an object in the scene -->
+      <a-entity
+        id="space-env-model"
+        gltf-model="#space-env"
+        position="-100 -300 -8"
+        scale="300 300 300"
+        rotation="0 0 0">
+      </a-entity>
+
+      <!-- Purple planet -->
+      <a-entity
+        id="purple-planet-model"
+        gltf-model="#purple-planet"
+        position="0 -5 -20"
+        scale="5 5 5"
+        rotation="0 0 0">
+      </a-entity>
+
+      <!-- Crystal planet — further right, revealed by the pan -->
+      <a-entity
+        id="crystal-planet-model"
+        gltf-model="#crystal-planet"
+        position="150 -10 -25"
+        scale="5 5 5"
+        rotation="0 0 0">
+      </a-entity>
+
+    </a-entity>
+
+    <a-camera
+      position="0 0 0"
+      look-controls="magicWindowTrackingEnabled: false"
+      wasd-controls="enabled: false">
+    </a-camera>
+
+  </a-scene>
+
+  <div id="overlay">
+    <div id="title">Lost Little Alien</div>
+    <a class="btn" href="./alien.html">Play</a>
+  </div>
+
+  <script>
+// DoubleSide fix for all models; flatten metalness on alien so PBR colours show without an env map
+    ['space-env-model', 'purple-planet-model', 'crystal-planet-model', 'alien-model', 'spaceship-model'].forEach(id => {
+      document.getElementById(id).addEventListener('model-loaded', function () {
+        const mesh = this.getObject3D('mesh');
+        if (!mesh) return;
+        const isAlien = id === 'alien-model';
+        mesh.traverse(node => {
+          if (node.isMesh) {
+            const mats = Array.isArray(node.material) ? node.material : [node.material];
+            mats.forEach(m => {
+              m.side = THREE.DoubleSide;
+              if (isAlien) {
+                m.metalness = 0;
+                m.roughness = 0.6;
+                if (m.color) m.color.set(1, 1, 1);
+                if (m.map) {
+                  if (THREE.SRGBColorSpace !== undefined) m.map.colorSpace = THREE.SRGBColorSpace;
+                  m.map.needsUpdate = true;
+                }
+                console.log('[alien mat]', m.type, 'map:', !!m.map, 'color:', m.color?.getHexString());
+              }
+              m.needsUpdate = true;
+            });
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

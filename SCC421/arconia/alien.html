@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Arconia – Stranded</title>
+  <script src="./js/libs/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-troika-text/dist/aframe-troika-text.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #000; }
+
+    .a-enter-vr-button { display: none !important; }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 3vh;
+      pointer-events: none;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.5rem;
+      padding: 1.8rem 2.2rem;
+      max-width: 460px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      pointer-events: auto;
+      color: #fff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards;
+      animation-delay: 2s;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #a8d4ff;
+      margin-bottom: 0.6rem;
+    }
+
+    .story {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 1.6rem;
+    }
+
+    .story strong { color: #fff; }
+
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2.4rem;
+      background: linear-gradient(135deg, #3a7bd5, #6a3de8);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 999px;
+      box-shadow: 0 0 30px rgba(100,100,255,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 45px rgba(100,100,255,0.6);
+    }
+    .btn:active { transform: scale(0.97); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #dialogue-btn {
+      position: fixed;
+      z-index: 20;
+      transform: translateX(-50%);
+      padding: 0.5rem 1.6rem;
+      background: linear-gradient(135deg, #3a7bd5, #6a3de8);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 999px;
+      box-shadow: 0 0 20px rgba(100,100,255,0.4);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    #dialogue-btn:hover {
+      transform: translateX(-50%) scale(1.05);
+      box-shadow: 0 0 35px rgba(100,100,255,0.6);
+    }
+    #dialogue-btn:active { transform: translateX(-50%) scale(0.97); }
+
+  </style>
+</head>
+<body>
+
+  <a-scene
+    vr-mode-ui="enabled: false"
+    renderer="antialias: true">
+
+    <a-assets>
+      <img id="star-tex" src="" crossorigin="anonymous">
+      <a-asset-item id="purple-planet" src="./models/purple_planet.glb"></a-asset-item>
+      <a-asset-item id="alien" src="./models/baby_cute_alien.glb"></a-asset-item>
+      <a-asset-item id="speech-bubble" src="./models/imessage_speech_bubble.glb"></a-asset-item>
+    </a-assets>
+
+    <a-sky id="sky" src="#star-tex"></a-sky>
+
+    <a-light type="ambient" color="#ffffff" intensity="0.8"></a-light>
+    <a-light type="directional" color="#ffe0cc" intensity="1.4" position="2 3 1"></a-light>
+    <a-light type="point" color="#cc88ff" intensity="0.6" position="-3 2 -8"></a-light>
+
+    <!-- Purple planet — filling the lower portion of the view -->
+    <a-entity
+      id="purple-planet-model"
+      gltf-model="#purple-planet"
+      position="0 -9 -7"
+      scale="8 8 8"
+      rotation="0 0 0"
+      animation="property: rotation; to: 0 360 0; dur: 40000; easing: linear; loop: true">
+    </a-entity>
+
+<!-- Speech bubble — floating above the alien -->
+    <a-entity
+      id="speech-bubble-model"
+      gltf-model="#speech-bubble"
+      position="3.8 1.5 -7"
+      scale="2.5 2.5 2.5"
+      rotation="-90 0 0">
+    </a-entity>
+
+    <!-- Speech bubble text -->
+    <a-troika-text
+      id="bubble-text"
+      value=""
+      align="center"
+      color="#000000"
+      font="./Moonstrike-nRqzP.otf"
+      font-size="0.5"
+      anchor="center"
+      position="3.8 1.5 -6.5">
+    </a-troika-text>
+
+    <!-- Alien — standing on top of the planet -->
+    <a-entity
+      id="alien-model"
+      gltf-model="#alien"
+      position="0 -2.2 -7"
+      scale="1.2 1.2 1.2"
+      animation="property: position; to: 0 -1.8 -7; dur: 2000; dir: alternate; loop: true; easing: easeInOutSine">
+    </a-entity>
+
+  </a-scene>
+
+  <button id="dialogue-btn">Next</button>
+
+  <script>
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 1024;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#000010';
+    ctx.fillRect(0, 0, 2048, 1024);
+    for (let i = 0; i < 2500; i++) {
+      const x = Math.random() * 2048;
+      const y = Math.random() * 1024;
+      const r = Math.random() * 1.2 + 0.3;
+      const brightness = Math.random() * 0.7 + 0.3;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${brightness})`;
+      ctx.fill();
+    }
+    document.getElementById('star-tex').src = canvas.toDataURL();
+
+    const dialogues = [
+      "I'm lost...\nplease help\nme get home",
+      "My spaceship\nhas run out\nof fuel!",
+      "Only you can\nhelp power it\nback up...",
+      "Will you\nhelp me?"
+    ];
+    let step = 0;
+    const bubbleText = document.getElementById('bubble-text');
+    const btn = document.getElementById('dialogue-btn');
+
+    function showStep(i) {
+      bubbleText.setAttribute('value', dialogues[i]);
+      btn.textContent = i < dialogues.length - 1 ? 'Next' : 'Yes';
+    }
+
+    showStep(0);
+
+    // Pin the button to the bottom-centre of the speech bubble in screen space
+    const scene = document.querySelector('a-scene');
+    const _tmp = new THREE.Vector3();
+    // 3D position of the bubble's bottom centre (slightly below bubble centre)
+    const bubbleBottom = new THREE.Vector3(4.3, 0.2, -7);
+
+    function positionBtn() {
+      if (!scene.camera) return;
+      _tmp.copy(bubbleBottom);
+      _tmp.project(scene.camera);
+      const x = (_tmp.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-_tmp.y * 0.5 + 0.5) * window.innerHeight;
+      btn.style.left = x + 'px';
+      btn.style.top  = y + 'px';
+      requestAnimationFrame(positionBtn);
+    }
+    scene.addEventListener('loaded', positionBtn);
+
+    btn.addEventListener('click', () => {
+      if (step < dialogues.length - 1) {
+        step++;
+        showStep(step);
+      } else {
+        window.location.href = './game.html';
+      }
+    });
+
+    // DoubleSide fix for planet
+    document.getElementById('purple-planet-model').addEventListener('model-loaded', function () {
+      const mesh = this.getObject3D('mesh');
+      if (!mesh) return;
+      mesh.traverse(node => {
+        if (node.isMesh) {
+          const mats = Array.isArray(node.material) ? node.material : [node.material];
+          mats.forEach(m => { m.side = THREE.DoubleSide; m.needsUpdate = true; });
+        }
+      });
+    });
+
+  </script>
+
+</body>
+</html>

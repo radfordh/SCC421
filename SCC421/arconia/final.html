@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Arconia – Mission Complete</title>
+  <script src="./js/libs/aframe.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #000; }
+    .a-enter-vr-button { display: none !important; }
+
+    @font-face {
+      font-family: 'Moonstrike';
+      src: url('./Moonstrike-nRqzP.otf') format('opentype');
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Fades to black then back — used to cut between the flight and the planet shot */
+    @keyframes sceneCut {
+      0%   { opacity: 0; }
+      30%  { opacity: 1; }
+      70%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    #fade-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 5;
+      opacity: 0;
+      pointer-events: none;
+      animation: sceneCut 3s ease forwards;
+      animation-delay: 8s;
+    }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 6vh;
+      pointer-events: none;
+      gap: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 1.4s ease forwards;
+      animation-delay: 11s;
+    }
+
+    #title {
+      font-family: 'Moonstrike', sans-serif;
+      font-size: 6rem;
+      color: #c084fc;
+      text-align: center;
+      line-height: 1.1;
+      text-shadow:
+        0 0 40px rgba(192,132,252,0.9),
+        0 0 80px rgba(147,51,234,0.6);
+    }
+
+    #subtitle {
+      font-family: monospace;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      pointer-events: auto;
+      display: inline-block;
+      padding: 0.8rem 2.8rem;
+      background: linear-gradient(135deg, #3a7bd5, #6a3de8);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 999px;
+      box-shadow: 0 0 30px rgba(100,100,255,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 45px rgba(100,100,255,0.6);
+    }
+    .btn:active { transform: scale(0.97); }
+  </style>
+</head>
+<body>
+
+  <div id="fade-overlay"></div>
+
+  <a-scene
+    vr-mode-ui="enabled: false"
+    renderer="antialias: true">
+
+    <a-assets>
+      <a-asset-item id="space-env"      src="./models/need_some_space.glb"></a-asset-item>
+      <a-asset-item id="purple-planet"  src="./models/purple_planet.glb"></a-asset-item>
+      <a-asset-item id="crystal-planet" src="./models/crystal_planet.glb"></a-asset-item>
+      <a-asset-item id="spaceship"      src="./models/futuristic_spaceship.glb"></a-asset-item>
+      <a-asset-item id="alien"          src="./models/baby_cute_alien.glb"></a-asset-item>
+    </a-assets>
+
+    <a-light type="ambient"     color="#ffffff" intensity="0.6"></a-light>
+    <a-light type="directional" color="#ffe0cc" intensity="1.2" position="1 2 1"></a-light>
+
+    <!-- Scene group — end-state of intro (pan complete, arc at 35°) -->
+    <a-entity id="scene-group" position="0 0 0" rotation="0 35 0">
+
+      <a-entity
+        id="space-env-model"
+        gltf-model="#space-env"
+        position="-100 -300 -8"
+        scale="300 300 300">
+      </a-entity>
+
+      <a-entity
+        id="purple-planet-model"
+        gltf-model="#purple-planet"
+        position="0 -5 -20"
+        scale="5 5 5"
+        animation="property: rotation; to: 0 360 0; dur: 40000; easing: linear; loop: true">
+      </a-entity>
+
+      <a-entity
+        id="crystal-planet-model"
+        gltf-model="#crystal-planet"
+        position="150 -10 -25"
+        scale="5 5 5"
+        animation="property: rotation; to: 0 -360 0; dur: 35000; easing: linear; loop: true">
+      </a-entity>
+
+      <!-- Alien — hidden until the crystal planet final shot -->
+      <a-entity
+        id="alien-model"
+        gltf-model="#alien"
+        visible="false"
+        position="150 -9 -23"
+        scale="1.2 1.2 1.2"
+        animation="property: position; to: 150 -8.5 -23; dur: 2000; dir: alternate; loop: true; easing: easeInOutSine">
+      </a-entity>
+
+      <!-- Parent alien — left -->
+      <a-entity
+        id="alien-parent-left"
+        gltf-model="#alien"
+        visible="false"
+        position="146 -9 -23"
+        scale="1.7 1.7 1.7"
+        animation="property: position; to: 146 -8.4 -23; dur: 2400; dir: alternate; loop: true; easing: easeInOutSine">
+      </a-entity>
+
+      <!-- Parent alien — right -->
+      <a-entity
+        id="alien-parent-right"
+        gltf-model="#alien"
+        visible="false"
+        position="154 -9 -23"
+        scale="1.7 1.7 1.7"
+        animation="property: position; to: 154 -8.4 -23; dur: 1800; dir: alternate; loop: true; easing: easeInOutSine">
+      </a-entity>
+
+      <!-- Spaceship — small, sitting on purple planet, flies to crystal planet -->
+      <a-entity
+        id="spaceship-model"
+        gltf-model="#spaceship"
+        position="0 0.5 -26"
+        scale="1.0 1.0 1.0"
+        rotation="0 90 -8"
+        animation__fly="
+          property: position;
+          from: 0 0.5 -26;
+          to:   148 -5 -23;
+          dur: 7000;
+          delay: 1500;
+          easing: easeInOutSine">
+      </a-entity>
+
+    </a-entity>
+
+    <a-camera
+      position="0 0 0"
+      rotation="0 30 0"
+      look-controls="magicWindowTrackingEnabled: false"
+      wasd-controls="enabled: false"
+      animation__pan="
+        property: rotation;
+        from: 0 30 0;
+        to:   0 -60 0;
+        dur: 7000;
+        delay: 1500;
+        easing: easeOutCubic"
+      animation__zoomin="
+        property: camera.fov;
+        from: 90; to: 48;
+        dur: 4500;
+        delay: 2000;
+        easing: easeInOutSine"
+      animation__zoomin2="
+        property: camera.fov;
+        from: 48; to: 28;
+        dur: 1500;
+        delay: 7000;
+        easing: easeInSine">
+    </a-camera>
+
+  </a-scene>
+
+
+  <script>
+    // While the screen is black, snap the scene to show the crystal planet centre-frame
+    // (mirrors the intro: scene-group x=-145 puts the crystal planet at world x≈5, z≈-25)
+    setTimeout(() => {
+      const group = document.getElementById('scene-group');
+      const cam   = document.querySelector('a-camera');
+      document.getElementById('spaceship-model').setAttribute('visible', false);
+      document.getElementById('alien-model').setAttribute('visible', true);
+      document.getElementById('alien-parent-left').setAttribute('visible', true);
+      document.getElementById('alien-parent-right').setAttribute('visible', true);
+      group.setAttribute('position', '-145 0 0');
+      group.setAttribute('rotation', '0 0 0');
+      cam.setAttribute('rotation',   '0 0 0');
+      cam.setAttribute('camera', 'fov', 72);
+    }, 9300);
+
+    ['space-env-model', 'purple-planet-model', 'crystal-planet-model', 'spaceship-model'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('model-loaded', function () {
+        const mesh = this.getObject3D('mesh');
+        if (!mesh) return;
+        mesh.traverse(node => {
+          if (node.isMesh) {
+            const mats = Array.isArray(node.material) ? node.material : [node.material];
+            mats.forEach(m => { m.side = THREE.DoubleSide; m.needsUpdate = true; });
+          }
+        });
+      });
+    });
+
+  </script>
+
+</body>
+</html>
