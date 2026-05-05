@@ -226,15 +226,15 @@ AFRAME.registerComponent('bridge-console-controller', {
 
     await this.delay(600);
 
-    // Pan camera to face the hologram table (table is to the left — positive Y rotation)
     const rig = document.getElementById('camera-rig');
     if (rig) {
-      rig.setAttribute('animation__pan', 'property: rotation; from: 0 0 0; to: 0 55 0; dur: 1400; easing: easeInOutSine');
-      await this.delay(2400);
+      // Tilt down to focus on the shelf stars
+      rig.setAttribute('animation__pan', 'property: rotation; from: 0 0 0; to: 20 0 0; dur: 800; easing: easeInOutSine');
+      await this.delay(2200);
 
-      // Pan back to centre
-      rig.setAttribute('animation__pan', 'property: rotation; from: 0 55 0; to: 0 0 0; dur: 1400; easing: easeInOutSine');
-      await this.delay(1500);
+      // Pan back up to the AR camera
+      rig.setAttribute('animation__pan', 'property: rotation; from: 20 0 0; to: 0 0 0; dur: 800; easing: easeInOutSine');
+      await this.delay(900);
     }
   },
 
