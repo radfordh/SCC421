@@ -171,8 +171,8 @@
 		  id="xr-click-player"
 		  sound="src: #xr_click_sfx; poolSize: 4; volume: 1.0">
 		</a-entity>
-        <a-entity id="camera-rig">
-          <a-camera position="0 0 0" rotation="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false" camera="active: true">
+        <a-entity id="camera-rig" position="0 -0.8 0">
+          <a-camera position="0 0 0" rotation="-10 0 0" look-controls="enabled: false" wasd-controls="enabled: false" camera="active: true">
             <a-cursor
               rayOrigin="mouse"
               raycaster="objects: .clickable"
@@ -211,10 +211,10 @@
 <!-- UPPER SLAB -->
 			<a-box position="0 -1.1 -5.0" depth="1.0" width="8" height="0.05" color="#666">
 			 <a-entity id="upper-collection">
-				<a-entity id="m1" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #8fec43" star-glow</a-entity>
-				<a-entity id="m2" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #36bdab" star-glow</a-entity>
-				<a-entity id="m3" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ff9448" star-glow</a-entity>
-				<a-entity id="m4" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #ec4376" star-glow</a-entity>
+				<a-entity id="m1" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #33cc33" star-glow</a-entity>
+				<a-entity id="m2" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #ffcc00" star-glow</a-entity>
+				<a-entity id="m3" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ff2233" star-glow</a-entity>
+				<a-entity id="m4" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #3355ff" star-glow</a-entity>
 				<a-entity id="m1b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-1.5 0.05 0"></a-entity>
 				<a-entity id="m2b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-0.5 0.05 0"></a-entity>
 				<a-entity id="m3b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 0.5 0.05 0"></a-entity>
