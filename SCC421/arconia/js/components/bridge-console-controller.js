@@ -234,7 +234,7 @@ AFRAME.registerComponent('bridge-console-controller', {
 
       // Hide the AR camera and pan to the progress shelf
       if (portal) portal.style.display = 'none';
-      rig.setAttribute('animation__pan', 'property: rotation; to: 0 80 0; dur: 1400; easing: easeInOutSine');
+      rig.setAttribute('animation__pan', 'property: rotation; to: 0 95 0; dur: 1400; easing: easeInOutSine');
       await this.delay(2400);
 
       // Pan back to centre and restore the portal
