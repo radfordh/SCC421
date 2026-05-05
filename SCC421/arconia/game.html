@@ -180,7 +180,7 @@
 		  sound="src: #xr_click_sfx; poolSize: 4; volume: 1.0">
 		</a-entity>
         <a-entity id="camera-rig">
-          <a-camera position="0 0 0" rotation="0 0 0" look-controls="magicWindowTrackingEnabled: false" wasd-controls="enabled: false" camera="active: true">
+          <a-camera position="0 0 0" rotation="-20 0 0" look-controls="magicWindowTrackingEnabled: false" wasd-controls="enabled: false" camera="active: true">
             <a-cursor
               rayOrigin="mouse"
               raycaster="objects: .clickable"
@@ -271,6 +271,12 @@
 
     portal.style.transform = '';
 
+    // Fixed at load time so dragging / browser-chrome changes don't resize the portal
+    const W = window.innerWidth, H = window.innerHeight;
+    const size = 0.33 * Math.min(W, H);
+    portal.style.width  = size + 'px';
+    portal.style.height = size + 'px';
+
     function tick() {
       requestAnimationFrame(tick);
       marker.getWorldPosition(tmp);
@@ -282,18 +288,10 @@
       }
       portal.style.display = 'block';
 
-      const W = window.innerWidth, H = window.innerHeight;
-      const size = 0.33 * Math.min(W, H); // vmin — stays sensible on landscape
-
-      // JS owns size — removes dependency on CSS vw rounding after resize
-      portal.style.width  = size + 'px';
-      portal.style.height = size + 'px';
-
-      // Home centre, recomputed each frame so it survives resize
+      // Home centre uses the fixed W/H captured at load
       const homeCX = HOME_X * W;
       const homeCY = HOME_Y_VH * H + size / 2;
 
-      // Delta between current and initial marker screen position
       const dx = (tmp.x - initNDCx) / 2 * W;
       const dy = (initNDCy - tmp.y) / 2 * H;
 
