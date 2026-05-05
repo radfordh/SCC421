@@ -197,11 +197,11 @@
 				scale="1 1 1"
 				rotation="0 180 15">
 				<!-- Progress marbles — neon green to match energy bar -->
-				<a-entity id="pm1" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60 -0.70" scale="0 0 0"></a-entity>
-				<a-entity id="pm2" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60 -0.35" scale="0 0 0"></a-entity>
-				<a-entity id="pm3" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.00" scale="0 0 0"></a-entity>
-				<a-entity id="pm4" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.35" scale="0 0 0"></a-entity>
-				<a-entity id="pm5" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.70" scale="0 0 0"></a-entity>
+				<a-entity id="pm1" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.70" scale="0 0 0"></a-entity>
+				<a-entity id="pm2" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.35" scale="0 0 0"></a-entity>
+				<a-entity id="pm3" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.00" scale="0 0 0"></a-entity>
+				<a-entity id="pm4" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.35" scale="0 0 0"></a-entity>
+				<a-entity id="pm5" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.70" scale="0 0 0"></a-entity>
 			</a-entity>
 
 <!-- Marker at the spaceship window's world position — projected to screen each frame to move the portal -->
@@ -219,10 +219,10 @@
 <!-- UPPER SLAB -->
 			<a-box position="0 -1.1 -5.0" depth="1.0" width="8" height="0.05" color="#666">
 			 <a-entity id="upper-collection">
-				<a-entity id="m1" mixin="marble-base" gltf-model="#glowing-star" scale="0.15 0.15 0.15" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #8fec43" star-fx="color: #8fec43"></a-entity>
-				<a-entity id="m2" mixin="marble-base" gltf-model="#glowing-star" scale="0.15 0.15 0.15" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #36bdab" star-fx="color: #36bdab"></a-entity>
-				<a-entity id="m3" mixin="marble-base" gltf-model="#glowing-star" scale="0.15 0.15 0.15" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ff9448" star-fx="color: #ff9448"></a-entity>
-				<a-entity id="m4" mixin="marble-base" gltf-model="#glowing-star" scale="0.15 0.15 0.15" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #ec4376" star-fx="color: #ec4376"></a-entity>
+				<a-entity id="m1" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #22aa33"></a-entity>
+				<a-entity id="m2" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #2255cc"></a-entity>
+				<a-entity id="m3" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ddbb00"></a-entity>
+				<a-entity id="m4" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #cc2233"></a-entity>
 				<a-entity id="m1b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-1.5 0.05 0"></a-entity>
 				<a-entity id="m2b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-0.5 0.05 0"></a-entity>
 				<a-entity id="m3b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 0.5 0.05 0"></a-entity>

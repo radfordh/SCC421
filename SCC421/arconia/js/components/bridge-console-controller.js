@@ -219,7 +219,7 @@ AFRAME.registerComponent('bridge-console-controller', {
     const restY = pos.y.toFixed(2);
 
     // Marble rises into place
-    pm.setAttribute('animation__scale', 'property: scale; from: 0 0 0; to: 1 1 1; dur: 500; easing: easeOutBack');
+    pm.setAttribute('animation__scale', 'property: scale; from: 0 0 0; to: 0.12 0.12 0.12; dur: 500; easing: easeOutBack');
     pm.setAttribute('animation__rise', `property: position; from: ${x} ${(pos.y - 0.35).toFixed(2)} ${z}; to: ${x} ${restY} ${z}; dur: 700; delay: 100; easing: easeOutCubic`);
 
     await this.delay(600);
