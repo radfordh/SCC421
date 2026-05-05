@@ -227,14 +227,17 @@ AFRAME.registerComponent('bridge-console-controller', {
     await this.delay(600);
 
     const rig = document.getElementById('camera-rig');
+    const portal = document.getElementById('portal');
     if (rig) {
-      // Tilt down to focus on the shelf stars
-      rig.setAttribute('animation__pan', 'property: rotation; from: 0 0 0; to: 20 0 0; dur: 800; easing: easeInOutSine');
-      await this.delay(2200);
+      // Hide the AR camera and pan to the progress shelf
+      if (portal) portal.style.display = 'none';
+      rig.setAttribute('animation__pan', 'property: rotation; from: 0 0 0; to: 0 55 0; dur: 1400; easing: easeInOutSine');
+      await this.delay(2400);
 
-      // Pan back up to the AR camera
-      rig.setAttribute('animation__pan', 'property: rotation; from: 20 0 0; to: 0 0 0; dur: 800; easing: easeInOutSine');
-      await this.delay(900);
+      // Pan back to the AR camera and restore the portal
+      rig.setAttribute('animation__pan', 'property: rotation; from: 0 55 0; to: 0 0 0; dur: 1400; easing: easeInOutSine');
+      await this.delay(1500);
+      if (portal) portal.style.display = 'block';
     }
   },
 
