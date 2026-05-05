@@ -180,7 +180,7 @@
 		  sound="src: #xr_click_sfx; poolSize: 4; volume: 1.0">
 		</a-entity>
         <a-entity id="camera-rig">
-          <a-camera position="0 0 0" rotation="-20 0 0" look-controls="magicWindowTrackingEnabled: false" wasd-controls="enabled: false" camera="active: true">
+          <a-camera position="0 0 0" rotation="0 0 0" look-controls="enabled: false" wasd-controls="enabled: false" camera="active: true">
             <a-cursor
               rayOrigin="mouse"
               raycaster="objects: .clickable"
@@ -197,11 +197,11 @@
 				scale="1 1 1"
 				rotation="0 180 15">
 				<!-- Progress marbles — neon green to match energy bar -->
-				<a-entity id="pm1" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.70" scale="0.12 0.12 0.12"></a-entity>
-				<a-entity id="pm2" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.35" scale="0.12 0.12 0.12"></a-entity>
-				<a-entity id="pm3" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.00" scale="0.12 0.12 0.12"></a-entity>
-				<a-entity id="pm4" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.35" scale="0.12 0.12 0.12"></a-entity>
-				<a-entity id="pm5" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.70" scale="0.12 0.12 0.12"></a-entity>
+				<a-entity id="pm1" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.70" scale="0 0 0"></a-entity>
+				<a-entity id="pm2" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.35" scale="0 0 0"></a-entity>
+				<a-entity id="pm3" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.00" scale="0 0 0"></a-entity>
+				<a-entity id="pm4" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.35" scale="0 0 0"></a-entity>
+				<a-entity id="pm5" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.70" scale="0 0 0"></a-entity>
 			</a-entity>
 
 <!-- Marker at the spaceship window's world position — projected to screen each frame to move the portal -->
