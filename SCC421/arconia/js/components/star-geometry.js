@@ -1,3 +1,24 @@
+AFRAME.registerComponent('model-color', {
+  schema: { color: { default: '#ffffff' } },
+  init: function () {
+    this.el.addEventListener('model-loaded', () => {
+      const mesh = this.el.getObject3D('mesh');
+      if (!mesh) return;
+      const col = new THREE.Color(this.data.color);
+      mesh.traverse(node => {
+        if (!node.isMesh) return;
+        const mats = Array.isArray(node.material) ? node.material : [node.material];
+        mats.forEach(m => {
+          m.color.set(col);
+          m.emissive.set(col);
+          m.emissiveIntensity = 0.6;
+          m.needsUpdate = true;
+        });
+      });
+    });
+  }
+});
+
 AFRAME.registerComponent('star-fx', {
   schema: {
     color: { default: '#ffffff' }
