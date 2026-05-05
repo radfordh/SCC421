@@ -229,13 +229,16 @@ AFRAME.registerComponent('bridge-console-controller', {
     const rig = document.getElementById('camera-rig');
     const portal = document.getElementById('portal');
     if (rig) {
+      // Ensure rig is at centre before panning
+      rig.object3D.rotation.set(0, 0, 0);
+
       // Hide the AR camera and pan to the progress shelf
       if (portal) portal.style.display = 'none';
-      rig.setAttribute('animation__pan', 'property: rotation; from: 0 0 0; to: 0 55 0; dur: 1400; easing: easeInOutSine');
+      rig.setAttribute('animation__pan', 'property: rotation; to: 0 80 0; dur: 1400; easing: easeInOutSine');
       await this.delay(2400);
 
-      // Pan back to the AR camera and restore the portal
-      rig.setAttribute('animation__pan', 'property: rotation; from: 0 55 0; to: 0 0 0; dur: 1400; easing: easeInOutSine');
+      // Pan back to centre and restore the portal
+      rig.setAttribute('animation__pan', 'property: rotation; to: 0 0 0; dur: 1400; easing: easeInOutSine');
       await this.delay(1500);
       if (portal) portal.style.display = 'block';
     }
