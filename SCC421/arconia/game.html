@@ -18,6 +18,7 @@
 	<script src="./js/components/target-marble-link.js"></script>
 	<script src="./js/components/audio-component.js"></script>
 	<script src="./js/components/bridge-console-controller.js"></script>
+	<script src="./js/components/star-geometry.js"></script>
 	
 
 	
@@ -159,8 +160,8 @@
 			<a-asset-item id="lumen-hologram" src="./models/lumen_hologram_table.glb"></a-asset-item>
 		    <a-mixin
 				id="marble-base"
-				geometry="primitive: octahedron; radius: 0.12"
-				material="metalness: 0.8; roughness: 0.1"
+				geometry="primitive: star; outerRadius: 0.12; innerRadius: 0.05; depth: 0.04"
+				material="metalness: 0.8; roughness: 0.1; side: double"
 				animation__spin="
 				  property: rotation;
 				  to: 360 360 0; dur: 4000; easing: linear; loop: true; autoplay: false;
@@ -197,11 +198,11 @@
 				scale="1 1 1"
 				rotation="0 180 15">
 				<!-- Progress marbles — neon green to match energy bar -->
-				<a-entity id="pm1" geometry="primitive: octahedron; radius: 0.08" material="metalness: 0.8; roughness: 0.1; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60 -0.70" scale="0 0 0"></a-entity>
-				<a-entity id="pm2" geometry="primitive: octahedron; radius: 0.08" material="metalness: 0.8; roughness: 0.1; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60 -0.35" scale="0 0 0"></a-entity>
-				<a-entity id="pm3" geometry="primitive: octahedron; radius: 0.08" material="metalness: 0.8; roughness: 0.1; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.00" scale="0 0 0"></a-entity>
-				<a-entity id="pm4" geometry="primitive: octahedron; radius: 0.08" material="metalness: 0.8; roughness: 0.1; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.35" scale="0 0 0"></a-entity>
-				<a-entity id="pm5" geometry="primitive: octahedron; radius: 0.08" material="metalness: 0.8; roughness: 0.1; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.70" scale="0 0 0"></a-entity>
+				<a-entity id="pm1" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60 -0.70" scale="0 0 0"></a-entity>
+				<a-entity id="pm2" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60 -0.35" scale="0 0 0"></a-entity>
+				<a-entity id="pm3" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.00" scale="0 0 0"></a-entity>
+				<a-entity id="pm4" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.35" scale="0 0 0"></a-entity>
+				<a-entity id="pm5" geometry="primitive: star; outerRadius: 0.08; innerRadius: 0.032; depth: 0.025" material="metalness: 0.8; roughness: 0.1; side: double; color: #39ff14; emissive: #39ff14; emissiveIntensity: 0.6" position="0 0.60  0.70" scale="0 0 0"></a-entity>
 			</a-entity>
 
 <!-- Marker at the spaceship window's world position — projected to screen each frame to move the portal -->
@@ -219,10 +220,10 @@
 <!-- UPPER SLAB -->
 			<a-box position="0 -1.1 -5.0" depth="1.0" width="8" height="0.05" color="#666">
 			 <a-entity id="upper-collection">
-				<a-entity id="m1" mixin="marble-base" geometry="primitive: octahedron; radius: 0.25" position="-1.5 0.3 0" material="metalness: 0.8; roughness: 0.1; color: #8fec43; emissive: #8fec43; emissiveIntensity: 0.4"></a-entity>
-				<a-entity id="m2" mixin="marble-base" geometry="primitive: octahedron; radius: 0.25" position="-0.5 0.3 0" material="metalness: 0.8; roughness: 0.1; color: #36bdab; emissive: #36bdab; emissiveIntensity: 0.4"></a-entity>
-				<a-entity id="m3" mixin="marble-base" geometry="primitive: octahedron; radius: 0.25" position=" 0.5 0.3 0" material="metalness: 0.8; roughness: 0.1; color: #ff9448; emissive: #ff9448; emissiveIntensity: 0.4"></a-entity>
-				<a-entity id="m4" mixin="marble-base" geometry="primitive: octahedron; radius: 0.25" position=" 1.5 0.3 0" material="metalness: 0.8; roughness: 0.1; color: #ec4376; emissive: #ec4376; emissiveIntensity: 0.4"></a-entity>
+				<a-entity id="m1" mixin="marble-base" geometry="primitive: star; outerRadius: 0.25; innerRadius: 0.10; depth: 0.08" position="-1.5 0.3 0" material="metalness: 0.8; roughness: 0.1; side: double; color: #8fec43; emissive: #8fec43; emissiveIntensity: 0.4" star-fx="color: #8fec43"></a-entity>
+				<a-entity id="m2" mixin="marble-base" geometry="primitive: star; outerRadius: 0.25; innerRadius: 0.10; depth: 0.08" position="-0.5 0.3 0" material="metalness: 0.8; roughness: 0.1; side: double; color: #36bdab; emissive: #36bdab; emissiveIntensity: 0.4" star-fx="color: #36bdab"></a-entity>
+				<a-entity id="m3" mixin="marble-base" geometry="primitive: star; outerRadius: 0.25; innerRadius: 0.10; depth: 0.08" position=" 0.5 0.3 0" material="metalness: 0.8; roughness: 0.1; side: double; color: #ff9448; emissive: #ff9448; emissiveIntensity: 0.4" star-fx="color: #ff9448"></a-entity>
+				<a-entity id="m4" mixin="marble-base" geometry="primitive: star; outerRadius: 0.25; innerRadius: 0.10; depth: 0.08" position=" 1.5 0.3 0" material="metalness: 0.8; roughness: 0.1; side: double; color: #ec4376; emissive: #ec4376; emissiveIntensity: 0.4" star-fx="color: #ec4376"></a-entity>
 				<a-entity id="m1b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-1.5 0.05 0"></a-entity>
 				<a-entity id="m2b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-0.5 0.05 0"></a-entity>
 				<a-entity id="m3b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 0.5 0.05 0"></a-entity>
