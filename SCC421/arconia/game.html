@@ -125,10 +125,18 @@
         mindar-image="imageTargetSrc: ./images/targets.mind;maxTrack: 4; filterMinCF: 0.0005;  filterBeta: 0.1; warmupTolerance: 2;   missTolerance: 3;uiScanning: false;"
         vr-mode-ui="enabled: false" style="pointer-events: none"
         device-orientation-permission-ui="enabled: true"> 
-	  <a-entity mindar-image-target="targetIndex: 0" target-star-link="starId: m1"></a-entity>
-      <a-entity mindar-image-target="targetIndex: 1" target-star-link="starId: m2"></a-entity>
-	  <a-entity mindar-image-target="targetIndex: 2" target-star-link="starId: m3"></a-entity>
-      <a-entity mindar-image-target="targetIndex: 3" target-star-link="starId: m4"></a-entity>
+	  <a-entity mindar-image-target="targetIndex: 0" target-star-link="starId: m1">
+        <a-text value="A" align="center" color="#FF0000" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
+      <a-entity mindar-image-target="targetIndex: 1" target-star-link="starId: m2">
+        <a-text value="B" align="center" color="#00FF00" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
+	  <a-entity mindar-image-target="targetIndex: 2" target-star-link="starId: m3">
+        <a-text value="C" align="center" color="#FF00FF" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
+      <a-entity mindar-image-target="targetIndex: 3" target-star-link="starId: m4">
+        <a-text value="D" align="center" color="#00FFFF" width="25" position="0 0 0.1"></a-text>
+      </a-entity>
         <a-camera mindar-orientation-reset look-controls="enabled: false"></a-camera>
       </a-scene>
     </div>
