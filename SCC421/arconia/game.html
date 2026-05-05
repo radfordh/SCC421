@@ -15,7 +15,7 @@
 
 	<script src="./js/components/mindar-orientation-reset.js"></script>
 	<script src="./js/components/base-indicator.js"></script>
-	<script src="./js/components/target-marble-link.js"></script>
+	<script src="./js/components/target-star-link.js"></script>
 	<script src="./js/components/audio-component.js"></script>
 	<script src="./js/components/bridge-console-controller.js"></script>
 	<script src="./js/components/star-geometry.js"></script>
@@ -125,16 +125,16 @@
         mindar-image="imageTargetSrc: ./images/targets.mind;maxTrack: 4; filterMinCF: 0.0005;  filterBeta: 0.1; warmupTolerance: 2;   missTolerance: 3;uiScanning: false;"
         vr-mode-ui="enabled: false" style="pointer-events: none"
         device-orientation-permission-ui="enabled: true"> 
-	  <a-entity mindar-image-target="targetIndex: 0" target-marble-link="marbleId: m1">
+	  <a-entity mindar-image-target="targetIndex: 0" target-star-link="starId: m1">
         <a-text value="A" align="center" color="#FF0000" width="25" position="0 0 0.1"></a-text>
       </a-entity>
-      <a-entity mindar-image-target="targetIndex: 1" target-marble-link="marbleId: m2">
+      <a-entity mindar-image-target="targetIndex: 1" target-star-link="starId: m2">
         <a-text value="B" align="center" color="#00FF00" width="25" position="0 0 0.1"></a-text>
       </a-entity>
-	  <a-entity mindar-image-target="targetIndex: 2" target-marble-link="marbleId: m3">
+	  <a-entity mindar-image-target="targetIndex: 2" target-star-link="starId: m3">
         <a-text value="C" align="center" color="#FF00FF" width="25" position="0 0 0.1"></a-text>
       </a-entity>
-      <a-entity mindar-image-target="targetIndex: 3" target-marble-link="marbleId: m4" >
+      <a-entity mindar-image-target="targetIndex: 3" target-star-link="starId: m4" >
         <a-text value="D" align="center" color="#00FFFF" width="25" position="0 0 0.1"></a-text>
       </a-entity>
         <a-camera mindar-orientation-reset look-controls="enabled: false"></a-camera>
@@ -160,7 +160,7 @@
 			<a-asset-item id="lumen-hologram" src="./models/lumen_hologram_table.glb"></a-asset-item>
 			<a-asset-item id="glowing-star" src="./models/glowing_star.glb"></a-asset-item>
 		    <a-mixin
-				id="marble-base"
+				id="star-base"
 				animation__spin="
 				  property: rotation;
 				  to: 360 360 0; dur: 4000; easing: linear; loop: true; autoplay: false;
@@ -196,7 +196,7 @@
 				position="-2.7 -0.5 0"
 				scale="1 1 1"
 				rotation="0 180 15">
-				<!-- Progress marbles — neon green to match energy bar -->
+				<!-- Progress stars — neon green to match energy bar -->
 				<a-entity id="pm1" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.70" scale="0 0 0"></a-entity>
 				<a-entity id="pm2" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60 -0.35" scale="0 0 0"></a-entity>
 				<a-entity id="pm3" gltf-model="#glowing-star" rotation="-90 90 0" position="0 0.60  0.00" scale="0 0 0"></a-entity>
@@ -219,10 +219,10 @@
 <!-- UPPER SLAB -->
 			<a-box position="0 -1.1 -5.0" depth="1.0" width="8" height="0.05" color="#666">
 			 <a-entity id="upper-collection">
-				<a-entity id="m1" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #8fec43"></a-entity>
-				<a-entity id="m2" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #36bdab"></a-entity>
-				<a-entity id="m3" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ff9448"></a-entity>
-				<a-entity id="m4" mixin="marble-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #ec4376"></a-entity>
+				<a-entity id="m1" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #8fec43"></a-entity>
+				<a-entity id="m2" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #36bdab"></a-entity>
+				<a-entity id="m3" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ff9448"></a-entity>
+				<a-entity id="m4" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #ec4376"></a-entity>
 				<a-entity id="m1b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-1.5 0.05 0"></a-entity>
 				<a-entity id="m2b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-0.5 0.05 0"></a-entity>
 				<a-entity id="m3b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 0.5 0.05 0"></a-entity>
@@ -240,65 +240,42 @@
 				<a-entity id="m7b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 0.0 0.05 0"></a-entity>
 				<a-entity id="m8b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 1.0 0.05 0"></a-entity>
 				<a-entity id="m9b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 2.0 0.05 0"></a-entity>
-				<a-entity id="m5" class="lower-marble clickable" mixin="marble-base" geometry="primitive: sphere; radius: 0.25" position="-2.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #FF4D4D"></a-entity>
-				<a-entity id="m6" class="lower-marble clickable" mixin="marble-base" geometry="primitive: sphere; radius: 0.25" position="-1.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #4DFF88"></a-entity>
-				<a-entity id="m7" class="lower-marble clickable" mixin="marble-base" geometry="primitive: sphere; radius: 0.25" position=" 0.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #4DA6FF"></a-entity>
-				<a-entity id="m8" class="lower-marble clickable" mixin="marble-base" geometry="primitive: sphere; radius: 0.25" position=" 1.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #FFD24D"></a-entity>
-				<a-entity id="m9" class="lower-marble clickable" mixin="marble-base" geometry="primitive: sphere; radius: 0.25" position=" 2.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #B84DFF"></a-entity>
+				<a-entity id="m5" class="lower-star clickable" mixin="star-base" geometry="primitive: sphere; radius: 0.25" position="-2.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #FF4D4D"></a-entity>
+				<a-entity id="m6" class="lower-star clickable" mixin="star-base" geometry="primitive: sphere; radius: 0.25" position="-1.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #4DFF88"></a-entity>
+				<a-entity id="m7" class="lower-star clickable" mixin="star-base" geometry="primitive: sphere; radius: 0.25" position=" 0.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #4DA6FF"></a-entity>
+				<a-entity id="m8" class="lower-star clickable" mixin="star-base" geometry="primitive: sphere; radius: 0.25" position=" 1.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #FFD24D"></a-entity>
+				<a-entity id="m9" class="lower-star clickable" mixin="star-base" geometry="primitive: sphere; radius: 0.25" position=" 2.0 0.3 0" material="src: ./images/marble-swirl.png; metalness: 0.2; roughness: 0.4; color: #B84DFF"></a-entity>
 			</a-box>
 			-->
       </a-scene>
 	  <script>
-// Track the spaceship window marker and move the portal div to follow it
+// Position the portal at a fixed home position, recalculated on orientation change
 (function () {
   const hudScene = document.querySelector('#hud-scene');
   const portal = document.getElementById('portal');
-  const tmp = new THREE.Vector3();
 
-  // CSS-defined home position as fractions — update these to reposition the portal
-  const HOME_X = 0.49;  // fraction of innerWidth  (was left: 57%)
-  const HOME_Y_VH = 0.20; // fraction of innerHeight (was top: 20vh)
+  // Fractions of viewport — tweak these to reposition the portal
+  const HOME_X = 0.49;
+  const HOME_Y_VH = 0.20;
 
-  hudScene.addEventListener('loaded', () => {
-    const cam3 = hudScene.camera;
-    const marker = document.querySelector('#window-marker').object3D;
-
-    // Capture marker's initial NDC — viewport-size-independent, stays valid after resize
-    marker.getWorldPosition(tmp);
-    tmp.project(cam3);
-    const initNDCx = tmp.x;
-    const initNDCy = tmp.y;
-
-    portal.style.transform = '';
-
-    // Fixed at load time so dragging / browser-chrome changes don't resize the portal
+  function placePortal() {
     const W = window.innerWidth, H = window.innerHeight;
-    const size = 0.33 * Math.min(W, H);
+    const portrait = H > W;
+    // Larger in portrait so it fills the narrower screen sensibly
+    const size = portrait ? W * 0.7 : Math.min(W, H) * 0.33;
+
     portal.style.width  = size + 'px';
     portal.style.height = size + 'px';
+    portal.style.left   = (HOME_X * W - size / 2) + 'px';
+    portal.style.top    = (HOME_Y_VH * H - size / 2) + 'px';
+    portal.style.display = 'block';
+  }
 
-    function tick() {
-      requestAnimationFrame(tick);
-      marker.getWorldPosition(tmp);
-      tmp.project(cam3);
-
-      if (tmp.z >= 1) {
-        portal.style.display = 'none';
-        return;
-      }
-      portal.style.display = 'block';
-
-      // Home centre uses the fixed W/H captured at load
-      const homeCX = HOME_X * W;
-      const homeCY = HOME_Y_VH * H + size / 2;
-
-      const dx = (tmp.x - initNDCx) / 2 * W;
-      const dy = (initNDCy - tmp.y) / 2 * H;
-
-      portal.style.left = (homeCX + dx - size / 2) + 'px';
-      portal.style.top  = (homeCY + dy - size / 2) + 'px';
-    }
-    tick();
+  hudScene.addEventListener('loaded', () => {
+    portal.style.transform = '';
+    placePortal();
+    window.addEventListener('orientationchange', () => setTimeout(placePortal, 400));
+    window.addEventListener('resize', placePortal);
   });
 })();
 

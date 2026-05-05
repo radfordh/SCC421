@@ -1,6 +1,6 @@
-AFRAME.registerComponent('target-marble-link', {
+AFRAME.registerComponent('target-star-link', {
   schema: {
-    marbleId: { type: 'string' }
+    starId: { type: 'string' }
   },
 
   init: function () {
@@ -27,8 +27,8 @@ AFRAME.registerComponent('target-marble-link', {
     const ctrl = window.bridgeConsoleController;
     if (!ctrl) return;
 
-    // Stop retrying once this marble has been accepted
-    if (ctrl.upperFound.has(this.data.marbleId)) return;
+    // Stop retrying once this star has been accepted
+    if (ctrl.upperFound.has(this.data.starId)) return;
 
     this.frameCount++;
 
@@ -46,9 +46,9 @@ AFRAME.registerComponent('target-marble-link', {
     if (this.frameCount % 60 === 0) {
       const rx = THREE.MathUtils.radToDeg(this._euler.x).toFixed(1);
       const ry = THREE.MathUtils.radToDeg(this._euler.y).toFixed(1);
-      console.log(`[target] ${this.data.marbleId}  X:${rx}°  Y:${ry}°  Z:${rz.toFixed(1)}°  (euler.z raw: ${THREE.MathUtils.radToDeg(o3d.rotation.z).toFixed(1)}°)`);
+      console.log(`[target] ${this.data.starId}  X:${rx}°  Y:${ry}°  Z:${rz.toFixed(1)}°  (euler.z raw: ${THREE.MathUtils.radToDeg(o3d.rotation.z).toFixed(1)}°)`);
     }
 
-    ctrl.onUpperTargetFound(this.data.marbleId, rz);
+    ctrl.onUpperTargetFound(this.data.starId, rz);
   }
 });

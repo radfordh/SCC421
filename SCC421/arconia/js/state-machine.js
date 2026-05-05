@@ -13,8 +13,8 @@ AFRAME.registerComponent('bridge-console-controller', {
     this.xrClickPlayer = document.querySelector('#xr-click-player');
 
     this.lowerIds.forEach((id) => {
-      const marble = document.querySelector('#' + id);
-      marble.addEventListener('click', () => this.onLowerMarbleClicked(id));
+      const star = document.querySelector('#' + id);
+      star.addEventListener('click', () => this.onLowerMarbleClicked(id));
     });
 
     window.bridgeConsoleController = this;
@@ -29,9 +29,9 @@ AFRAME.registerComponent('bridge-console-controller', {
   },
 
   setMarbleSpin: function (id, isOn) {
-    const marble = this.getMarble(id);
-    if (!marble) return;
-    marble.emit(isOn ? 'spin-start' : 'spin-stop');
+    const star = this.getMarble(id);
+    if (!star) return;
+    star.emit(isOn ? 'spin-start' : 'spin-stop');
   },
 
   setBaseLit: function (id, isOn) {
@@ -52,10 +52,10 @@ AFRAME.registerComponent('bridge-console-controller', {
     if (this.inputLocked) return;
     if (this.lockedLowerId === id) return;
 
-    // If this lower marble is already selected, leave it selected.
+    // If this lower star is already selected, leave it selected.
     if (this.selectedLowerId === id) return;
 
-    // Deselect previously selected lower marble if it is still selectable.
+    // Deselect previously selected lower star if it is still selectable.
     if (this.selectedLowerId && this.selectedLowerId !== this.lockedLowerId) {
       this.setBaseLit(this.selectedLowerId, false);
     }
@@ -64,7 +64,7 @@ AFRAME.registerComponent('bridge-console-controller', {
     this.setBaseLit(id, true);
 
     // First-time lower selection for this round:
-    // deselect all upper row marbles, unlight bases, stop rotation.
+    // deselect all upper row stars, unlight bases, stop rotation.
     this.resetUpperRow();
     this.roundResolved = false;
   },
@@ -91,7 +91,7 @@ AFRAME.registerComponent('bridge-console-controller', {
       await this.blinkUpperBasesTwice();
       this.resetUpperRow();
 
-      // Finalize selected lower marble:
+      // Finalize selected lower star:
       this.lockedLowerId = this.selectedLowerId;
       this.setMarbleSpin(this.lockedLowerId, true);
       this.setBaseLit(this.lockedLowerId, true);

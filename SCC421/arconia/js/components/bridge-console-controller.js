@@ -41,7 +41,7 @@ AFRAME.registerComponent('bridge-console-controller', {
     return a;
   },
 
-  getMarble: function (id) {
+  getStar: function (id) {
     return document.querySelector('#' + id);
   },
 
@@ -49,10 +49,10 @@ AFRAME.registerComponent('bridge-console-controller', {
     return document.querySelector('#' + id + 'b');
   },
 
-  setMarbleSpin: function (id, isOn) {
-    const marble = this.getMarble(id);
-    if (!marble) return;
-    marble.emit(isOn ? 'spin-start' : 'spin-stop');
+  setStarSpin: function (id, isOn) {
+    const star = this.getStar(id);
+    if (!star) return;
+    star.emit(isOn ? 'spin-start' : 'spin-stop');
   },
 
   setBaseLit: function (id, isOn) {
@@ -125,8 +125,10 @@ AFRAME.registerComponent('bridge-console-controller', {
 
   resetUpperRow: function () {
     this.upperIds.forEach((id) => {
-      this.setMarbleSpin(id, false);
+      this.setStarSpin(id, false);
       this.setBaseLit(id, false);
+      const star = this.getStar(id);
+      if (star) star.setAttribute('rotation', {x: -90, y: 0, z: 0});
     });
     this.upperCollection.setAttribute("visible", false);
     this.upperFound.clear();
@@ -166,7 +168,7 @@ AFRAME.registerComponent('bridge-console-controller', {
 
     this.upperFound.add(upperId);
     try { if (this.xrClickPlayer) this.xrClickPlayer.playSound(1); } catch (e) { console.warn('audio error', e); }
-    this.setMarbleSpin(upperId, true);
+    this.setStarSpin(upperId, true);
     this.setBaseLit(upperId, true);
 
     // Phototropism: m2 (TR) is mirrored and undetectable — complete on m1+m3+m4
@@ -183,7 +185,7 @@ AFRAME.registerComponent('bridge-console-controller', {
 
       this.currentLevel++;
       this.updateEnergyGauge(this.currentLevel);
-      await this.showProgressMarble(this.currentLevel);
+      await this.showProgressStar(this.currentLevel);
 
       if (this.currentLevel < this.maxLevels) {
         this.inputLocked = false;
@@ -209,7 +211,7 @@ AFRAME.registerComponent('bridge-console-controller', {
     await this.delay(80);
   },
 
-  showProgressMarble: async function (level) {
+  showProgressStar: async function (level) {
     const pm = document.getElementById('pm' + level);
     if (!pm) return;
 
