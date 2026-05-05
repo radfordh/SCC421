@@ -125,18 +125,10 @@
         mindar-image="imageTargetSrc: ./images/targets.mind;maxTrack: 4; filterMinCF: 0.0005;  filterBeta: 0.1; warmupTolerance: 2;   missTolerance: 3;uiScanning: false;"
         vr-mode-ui="enabled: false" style="pointer-events: none"
         device-orientation-permission-ui="enabled: true"> 
-	  <a-entity mindar-image-target="targetIndex: 0" target-star-link="starId: m1">
-        <a-text value="A" align="center" color="#FF0000" width="25" position="0 0 0.1"></a-text>
-      </a-entity>
-      <a-entity mindar-image-target="targetIndex: 1" target-star-link="starId: m2">
-        <a-text value="B" align="center" color="#00FF00" width="25" position="0 0 0.1"></a-text>
-      </a-entity>
-	  <a-entity mindar-image-target="targetIndex: 2" target-star-link="starId: m3">
-        <a-text value="C" align="center" color="#FF00FF" width="25" position="0 0 0.1"></a-text>
-      </a-entity>
-      <a-entity mindar-image-target="targetIndex: 3" target-star-link="starId: m4" >
-        <a-text value="D" align="center" color="#00FFFF" width="25" position="0 0 0.1"></a-text>
-      </a-entity>
+	  <a-entity mindar-image-target="targetIndex: 0" target-star-link="starId: m1"></a-entity>
+      <a-entity mindar-image-target="targetIndex: 1" target-star-link="starId: m2"></a-entity>
+	  <a-entity mindar-image-target="targetIndex: 2" target-star-link="starId: m3"></a-entity>
+      <a-entity mindar-image-target="targetIndex: 3" target-star-link="starId: m4"></a-entity>
         <a-camera mindar-orientation-reset look-controls="enabled: false"></a-camera>
       </a-scene>
     </div>
@@ -219,10 +211,10 @@
 <!-- UPPER SLAB -->
 			<a-box position="0 -1.1 -5.0" depth="1.0" width="8" height="0.05" color="#666">
 			 <a-entity id="upper-collection">
-				<a-entity id="m1" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #8fec43"></a-entity>
-				<a-entity id="m2" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #36bdab"></a-entity>
-				<a-entity id="m3" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ff9448"></a-entity>
-				<a-entity id="m4" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #ec4376"></a-entity>
+				<a-entity id="m1" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-1.5 0.3 0" model-color="color: #8fec43" star-glow</a-entity>
+				<a-entity id="m2" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position="-0.5 0.3 0" model-color="color: #36bdab" star-glow</a-entity>
+				<a-entity id="m3" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 0.5 0.3 0" model-color="color: #ff9448" star-glow</a-entity>
+				<a-entity id="m4" mixin="star-base" gltf-model="#glowing-star" scale="0.25 0.25 0.25" rotation="-90 0 0" position=" 1.5 0.3 0" model-color="color: #ec4376" star-glow</a-entity>
 				<a-entity id="m1b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-1.5 0.05 0"></a-entity>
 				<a-entity id="m2b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position="-0.5 0.05 0"></a-entity>
 				<a-entity id="m3b" mixin="base-cylinder" geometry="primitive: cylinder; radius: 0.25; height: 0.1" position=" 0.5 0.05 0"></a-entity>

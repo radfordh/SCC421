@@ -19,6 +19,22 @@ AFRAME.registerComponent('model-color', {
   }
 });
 
+AFRAME.registerComponent('star-glow', {
+  init: function () {
+    this.el.addEventListener('spin-start', () => this.setIntensity(8.0));
+    this.el.addEventListener('spin-stop',  () => this.setIntensity(2.0));
+  },
+  setIntensity: function (intensity) {
+    const mesh = this.el.getObject3D('mesh');
+    if (!mesh) return;
+    mesh.traverse(node => {
+      if (!node.isMesh) return;
+      const mats = Array.isArray(node.material) ? node.material : [node.material];
+      mats.forEach(m => { m.emissiveIntensity = intensity; });
+    });
+  }
+});
+
 AFRAME.registerGeometry('star', {
   schema: {
     outerRadius:  { default: 0.25 },
