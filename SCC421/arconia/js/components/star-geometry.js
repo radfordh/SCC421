@@ -1,14 +1,12 @@
 AFRAME.registerComponent('star-fx', {
   schema: {
-    color:       { default: '#ffffff' },
-    haloRadius:  { default: 0.32 }
+    color: { default: '#ffffff' }
   },
   init: function () {
     const el    = this.el;
     const color = this.data.color;
-    const r     = this.data.haloRadius;
 
-    // Breathing pulse on scale
+    // Breathing pulse
     el.setAttribute('animation__pulse', {
       property: 'scale',
       from: '0.93 0.93 0.93',
@@ -19,12 +17,27 @@ AFRAME.registerComponent('star-fx', {
       dir:  'alternate'
     });
 
-    // Tilted orbiting halo ring
-    const halo = document.createElement('a-entity');
-    halo.setAttribute('geometry', `primitive: torus; radius: ${r}; radiusTubular: 0.013; segmentsTubular: 48`);
-    halo.setAttribute('material',  `color: ${color}; emissive: ${color}; emissiveIntensity: 0.7; metalness: 0.2; roughness: 0.1; side: double; opacity: 0.8; transparent: true`);
-    halo.setAttribute('animation__orbit', `property: rotation; from: 72 0 0; to: 72 360 0; dur: 2800; easing: linear; loop: true`);
-    el.appendChild(halo);
+    // Sparkle points — low-poly spheres scattered around the star, twinkling independently
+    const COUNT = 10;
+    for (let i = 0; i < COUNT; i++) {
+      const theta = (i / COUNT) * Math.PI * 2;
+      const phi   = Math.acos(2 * (i / COUNT) - 1);
+      const r     = 0.28 + Math.random() * 0.12;
+
+      const x = (r * Math.sin(phi) * Math.cos(theta)).toFixed(3);
+      const y = (r * Math.sin(phi) * Math.sin(theta)).toFixed(3);
+      const z = (r * Math.cos(phi)).toFixed(3);
+
+      const delay = Math.floor((i / COUNT) * 1400);
+      const dur   = 500 + Math.floor(Math.random() * 400);
+
+      const spark = document.createElement('a-entity');
+      spark.setAttribute('geometry', 'primitive: sphere; radius: 0.018; segmentsWidth: 4; segmentsHeight: 4');
+      spark.setAttribute('material',  `color: white; emissive: ${color}; emissiveIntensity: 2.0; transparent: true; opacity: 0`);
+      spark.setAttribute('position',  `${x} ${y} ${z}`);
+      spark.setAttribute('animation__twinkle', `property: material.opacity; from: 0; to: 1; dir: alternate; dur: ${dur}; delay: ${delay}; loop: true; easing: easeInOutSine`);
+      el.appendChild(spark);
+    }
   }
 });
 
