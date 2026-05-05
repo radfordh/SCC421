@@ -263,10 +263,13 @@
     portal.style.display = 'block';
   }
 
+  // Size the portal immediately so MindAR initialises with correct canvas dimensions
+  placePortal();
+
   hudScene.addEventListener('loaded', () => {
     portal.style.transform = '';
-    placePortal();
-    window.addEventListener('orientationchange', () => setTimeout(placePortal, 400));
+    // Reload on orientation change so MindAR reinitialises the camera stream cleanly
+    window.addEventListener('orientationchange', () => setTimeout(() => location.reload(), 400));
     window.addEventListener('resize', placePortal);
   });
 })();
